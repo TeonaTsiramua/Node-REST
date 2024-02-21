@@ -2,14 +2,17 @@ import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 import productRoutes from './api/routes/products.js';
 import orderRoutes from './api/routes/orders.js';
+import userRoutes from './api/routes/user.js';
 
+dotenv.config();
 const app = express();
 
 mongoose.connect(
-  'mongodb+srv://tsiramuateona:nooneknows1@node-rest.o3sch9x.mongodb.net/'
+  `mongodb+srv://tsiramuateona:${process.env.MONGO_ATLAS_PW}@node-rest.o3sch9x.mongodb.net/`
 );
 
 mongoose.Promise = global.Promise;
@@ -35,6 +38,7 @@ app.use((req, res, next) => {
 //Routes
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/user', userRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
