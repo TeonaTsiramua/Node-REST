@@ -12,6 +12,8 @@ mongoose.connect(
   'mongodb+srv://tsiramuateona:nooneknows1@node-rest.o3sch9x.mongodb.net/'
 );
 
+mongoose.Promise = global.Promise;
+
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
