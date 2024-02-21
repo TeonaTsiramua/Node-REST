@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+import checkAuth from '../middleware/check-auth.js';
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -59,7 +60,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', upload.single('productImage'), (req, res, next) => {
+router.post('/', checkAuth, upload.single('productImage'), (req, res, next) => {
   console.log(req.file);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
@@ -142,13 +143,19 @@ router.patch('/:productId', (req, res, next) => {
     });
 });
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
   Product.deleteOne({ _id: id })
     .exec()
     .then((result) => {
+      if (result.deletedCount === 0) {
+        return res.status(404).json({
+          message: 'Order not found',
+        });
+      }
       res.status(200).json({
         message: 'Product deleted',
+        product: result,
         request: {
           type: 'POST',
           url: 'http://localhost:3000/products/',
